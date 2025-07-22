@@ -270,39 +270,73 @@
         </style>
     </head>
     <body>
-    <div class="container" style="width: 100%; margin: 0; padding: 2vw; box-sizing: border-box;">
-        <div class="header">
-            <h1>Monthly Medicine Tracker</h1>
-        </div>
-        <div class="main-flex" style="display: flex; gap: 2rem; align-items: flex-start; flex-wrap: nowrap; width: 100%; box-sizing: border-box;">
-            <!-- Calendar Section (80%) -->
-            <div class="calendar-section" style="flex: 0 0 80%; width: 80%; max-width: 80%; min-width: 260px;">
-                <div class="month-header">
-                    <button onclick="prevMonth()" class="nav-btn">
-                        ⬅️ Previous Month
-                    </button>
-                    <div id="month-year" class="month-text"></div>
-                    <button onclick="nextMonth()" class="nav-btn">
-                        Next Month ➡️
+        <div
+            class="container"
+            style="width: 100%; margin: 0; padding: 2vw; box-sizing: border-box"
+        >
+            <div class="header">
+                <h1>Monthly Medicine Tracker</h1>
+            </div>
+            <div
+                class="main-flex"
+                style="
+                    display: flex;
+                    gap: 2rem;
+                    align-items: flex-start;
+                    flex-wrap: nowrap;
+                    width: 100%;
+                    box-sizing: border-box;
+                "
+            >
+                <!-- Calendar Section (80%) -->
+                <div
+                    class="calendar-section"
+                    style="
+                        flex: 0 0 90%;
+                        width: 90%;
+                        max-width: 90%;
+                        min-width: 260px;
+                    "
+                >
+                    <div class="month-header">
+                        <button onclick="prevMonth()" class="nav-btn">
+                            ⬅️ Previous Month
+                        </button>
+                        <div id="month-year" class="month-text"></div>
+                        <button onclick="nextMonth()" class="nav-btn">
+                            Next Month ➡️
+                        </button>
+                    </div>
+                    <div class="calendar-grid" id="calendar-grid">
+                        <div class="day-header">Sun</div>
+                        <div class="day-header">Mon</div>
+                        <div class="day-header">Tue</div>
+                        <div class="day-header">Wed</div>
+                        <div class="day-header">Thu</div>
+                        <div class="day-header">Fri</div>
+                        <div class="day-header">Sat</div>
+                    </div>
+                    <button class="reset-button" onclick="resetAll()">
+                        Reset All
                     </button>
                 </div>
-                <div class="calendar-grid" id="calendar-grid">
-                    <div class="day-header">Sun</div>
-                    <div class="day-header">Mon</div>
-                    <div class="day-header">Tue</div>
-                    <div class="day-header">Wed</div>
-                    <div class="day-header">Thu</div>
-                    <div class="day-header">Fri</div>
-                    <div class="day-header">Sat</div>
+                <!-- Tablet List Section (20%) -->
+                <div
+                    class="tablet-section"
+                    style="
+                        flex: 0 0 28%;
+                        width: 28%;
+                        max-width: 28%;
+                        min-width: 180px;
+                    "
+                >
+                    <div class="month-header" style="height: 47px">
+                        <div id="month-year" class="month-text">Medicines</div>
+                    </div>
+                    <div class="medicine-grid" id="medicine-cards"></div>
                 </div>
-                <button class="reset-button" onclick="resetAll()">Reset All</button>
-            </div>
-            <!-- Tablet List Section (20%) -->
-            <div class="tablet-section" style="flex: 0 0 20%; width: 20%; max-width: 20%; min-width: 180px;">
-                <div class="medicine-grid" id="medicine-cards"></div>
             </div>
         </div>
-    </div>
 
         <script>
             // Custom scheduling logic for each medicine
