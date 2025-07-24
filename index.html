@@ -382,9 +382,19 @@
                     doses: [{ time: 'morning', icon: 'sun' }],
                 };
 
+                // Jakura 5MG: 1 tablet every day, afternoon and night
+                const jakura = {
+                    name: 'Jakura 5MG',
+                    doses: [
+                        { time: 'afternoon', icon: 'lunch' },
+                        { time: 'night', icon: 'moon' }
+                    ]
+                };
+
                 // Only show Folvite if scheduled for this day
                 const meds = [nukoxia, saaz, pentaspan];
                 if (folvite.doses.length > 0) meds.splice(2, 0, folvite); // Insert folvite before pentaspan
+                meds.push(jakura); // Always add Jakura at the end
 
                 return meds;
             }
