@@ -363,7 +363,10 @@
                 }
                 const saaz = {
                     name: 'SAAZ',
-                    doses: saazDoses,
+                    doses: [
+                        { time: 'afternoon', icon: 'lunch' },
+                        { time: 'night', icon: 'moon' },
+                    ],
                 };
 
                 // 3. Folvite: Alternate days, afternoon after lunch
@@ -387,8 +390,8 @@
                     name: 'Jakura 5MG',
                     doses: [
                         { time: 'afternoon', icon: 'lunch' },
-                        { time: 'night', icon: 'moon' }
-                    ]
+                        { time: 'night', icon: 'moon' },
+                    ],
                 };
 
                 // Only show Folvite if scheduled for this day
