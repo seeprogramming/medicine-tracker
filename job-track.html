@@ -1,0 +1,952 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <link
+            href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap"
+            rel="stylesheet"
+        />
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Job Application Tracker</title>
+        <!-- Tailwind CSS CDN -->
+        <script src="https://cdn.tailwindcss.com"></script>
+        <!-- Font Awesome for icons -->
+        <link
+            rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+            xintegrity="sha512-Fo3rlrZj/k7ujTnHg4CGR2D7kSs0V4LLanw2qksYuRlEzO+tcaEPQogQ0KaoGN26/zrn20ImR1DfuLWnOo7aBA=="
+            crossorigin="anonymous"
+            referrerpolicy="no-referrer"
+        />
+        <!-- Google Fonts - Poppins -->
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap"
+            rel="stylesheet"
+        />
+        <style>
+            /* Custom styles for the Poppins font */
+            body {
+                font-family: 'Poppins', sans-serif;
+                -webkit-font-smoothing: antialiased;
+                padding: 1.5rem; /* Applied padding directly to body for full width */
+            }
+            .shadow-custom {
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            } /* Slightly softer shadow */
+            .btn-primary {
+                background-color: #6a67f2;
+                color: white;
+            } /* Deeper purple */
+            .btn-primary:hover {
+                background-color: #5a57e0;
+            }
+            .btn-secondary {
+                background-color: #e0e7ff;
+                color: #4338ca;
+            } /* Light blue-purple, dark text */
+            .btn-secondary:hover {
+                background-color: #c7d2fe;
+            }
+
+            /* Updated Status Colors */
+            .status-Applied {
+                background-color: #fef3c7;
+                color: #b45309;
+            } /* Softer yellow-orange */
+            .status-Interview {
+                background-color: #dbeafe;
+                color: #1d4ed8;
+            } /* Softer blue */
+            .status-Rejected {
+                background-color: #fee2e2;
+                color: #dc2626;
+            } /* Standard red */
+            .status-Offer {
+                background-color: #dcfce7;
+                color: #16a34a;
+            } /* Softer green */
+            .tag {
+                background-color: #e0f7fa;
+                color: #00796b;
+            } /* Teal-ish tag */
+
+            .modal-overlay {
+                display: none;
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background-color: rgba(0, 0, 0, 0.5);
+                justify-content: center;
+                align-items: center;
+                z-index: 50;
+            }
+            .modal-overlay.active {
+                display: flex;
+            }
+            .modal-content {
+                background-color: white;
+                border-radius: 0.75rem; /* Slightly more rounded */
+                box-shadow:
+                    0 10px 15px -3px rgba(0, 0, 0, 0.1),
+                    0 4px 6px -2px rgba(0, 0, 0, 0.05);
+                overflow: hidden;
+                width: 90%;
+                max-width: 768px;
+            }
+
+            /* Custom scrollbar */
+            ::-webkit-scrollbar {
+                width: 6px;
+            }
+            ::-webkit-scrollbar-track {
+                background-color: #f1f5f9;
+                border-radius: 0.25rem;
+            }
+            ::-webkit-scrollbar-thumb {
+                background-color: #9ca3af;
+                border-radius: 0.25rem;
+            }
+            ::-webkit-scrollbar-thumb:hover {
+                background-color: #6b7280;
+            }
+        </style>
+    </head>
+    <body class="bg-gray-100" style="font-family: 'Poppins', sans-serif">
+        <header
+            style="
+                background: #fff;
+                box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+                border-radius: 12px;
+                margin-bottom: 2rem;
+                padding: 1rem 2rem;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                font-family: 'Poppins', sans-serif;
+            "
+        >
+            <div
+                style="
+                    font-size: 1.7rem;
+                    font-weight: 700;
+                    color: #007aff;
+                    letter-spacing: 1px;
+                "
+            >
+                My Tools
+            </div>
+            <nav style="display: flex; gap: 1.5rem">
+                <a
+                    href="index.html"
+                    style="
+                        color: #1a1a1a;
+                        font-weight: 500;
+                        text-decoration: none;
+                    "
+                    >Medicine Tracker</a
+                >
+                <a
+                    href="job-track.html"
+                    style="
+                        color: #1a1a1a;
+                        font-weight: 500;
+                        text-decoration: none;
+                    "
+                    >Job Tracker</a
+                >
+            </nav>
+        </header>
+        <!-- Main content wrapper - removed 'container mx-auto' -->
+        <div class="w-full">
+            <!-- Header Section -->
+            <header class="flex justify-between items-center mb-6">
+                <h1 class="text-2xl font-semibold text-gray-800">
+                    Job Application Tracker
+                </h1>
+                <button
+                    id="addApplicationBtn"
+                    class="btn-primary hover:shadow-md rounded-lg py-2 px-4 flex items-center transition duration-300 ease-in-out"
+                >
+                    <i class="fas fa-plus mr-2"></i>Add Application
+                </button>
+            </header>
+
+            <!-- Filter and Sort Section -->
+            <section
+                class="bg-white shadow-custom rounded-lg p-4 mb-6 flex items-center justify-between"
+            >
+                <div class="flex items-center">
+                    <label
+                        for="filterStatus"
+                        class="text-sm text-gray-700 font-medium mr-3"
+                        >Filter by:</label
+                    >
+                    <select
+                        id="filterStatus"
+                        class="border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-purple-500 focus:border-purple-500 sm:text-sm py-2 px-3"
+                    >
+                        <option value="">All Statuses</option>
+                        <option value="Applied">Applied</option>
+                        <option value="Interview">Interview</option>
+                        <option value="Rejected">Rejected</option>
+                        <option value="Offer">Offer</option>
+                    </select>
+                </div>
+                <div class="relative">
+                    <label for="sortBy" class="sr-only">Sort By</label>
+                    <select
+                        id="sortBy"
+                        class="block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-purple-500 focus:border-purple-500 sm:text-sm rounded-lg appearance-none bg-white border"
+                    >
+                        <option value="newest">Most Recent Date</option>
+                    </select>
+                    <div
+                        class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700"
+                    >
+                        <svg
+                            class="fill-current h-4 w-4"
+                            xmlns="http://www.w3.org/2000/svg"
+                            viewBox="0 0 20 20"
+                        >
+                            <path
+                                d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"
+                            />
+                        </svg>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Application List Table -->
+            <div class="overflow-x-auto bg-white shadow-custom rounded-lg">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th
+                                class="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider"
+                            >
+                                Company
+                            </th>
+                            <th
+                                class="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider"
+                            >
+                                Status
+                            </th>
+                            <th
+                                class="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider"
+                            >
+                                Link
+                            </th>
+                            <!-- New column header for tracking link -->
+                            <th
+                                class="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider"
+                            >
+                                Date Applied
+                            </th>
+                            <th
+                                class="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider"
+                            >
+                                Follow-up Date
+                            </th>
+                            <th
+                                class="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider"
+                            >
+                                Source
+                            </th>
+                            <th
+                                class="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider"
+                            >
+                                Location
+                            </th>
+                            <th
+                                class="px-4 py-3 text-right text-xs font-semibold text-gray-600 uppercase tracking-wider"
+                            >
+                                Actions
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody
+                        id="applicationList"
+                        class="bg-white divide-y divide-gray-200"
+                    >
+                        <!-- Application rows will be rendered here by JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Add/Edit Application Modal -->
+        <div id="applicationModal" class="modal-overlay">
+            <div class="modal-content">
+                <div
+                    class="flex justify-between items-center bg-purple-600 text-white py-3 px-4"
+                >
+                    <h2 id="modalTitle" class="text-lg font-semibold">
+                        Add New Application
+                    </h2>
+                    <button
+                        id="closeModalBtn"
+                        class="text-white hover:text-purple-200"
+                    >
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <form
+                    id="applicationForm"
+                    class="p-6 grid grid-cols-1 md:grid-cols-2 gap-4 overflow-y-auto max-h-[80vh]"
+                >
+                    <input type="hidden" id="appId" />
+                    <!-- Hidden field for application ID when editing -->
+                    <div>
+                        <label
+                            for="companyName"
+                            class="block text-sm font-medium text-gray-700"
+                            >Company Name</label
+                        >
+                        <input
+                            type="text"
+                            id="companyName"
+                            required
+                            class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 h-10 focus:outline-none focus:ring-purple-500 focus:border-purple-500 sm:text-sm"
+                        />
+                    </div>
+                    <div>
+                        <label
+                            for="rolePosition"
+                            class="block text-sm font-medium text-gray-700"
+                            >Role / Position</label
+                        >
+                        <input
+                            type="text"
+                            id="rolePosition"
+                            required
+                            class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 h-10 focus:outline-none focus:ring-purple-500 focus:border-purple-500 sm:text-sm"
+                        />
+                    </div>
+                    <div>
+                        <label
+                            for="dateApplied"
+                            class="block text-sm font-medium text-gray-700"
+                            >Date Applied</label
+                        >
+                        <input
+                            type="date"
+                            id="dateApplied"
+                            required
+                            class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 h-10 focus:outline-none focus:ring-purple-500 focus:border-purple-500 sm:text-sm"
+                        />
+                    </div>
+                    <div>
+                        <label
+                            for="status"
+                            class="block text-sm font-medium text-gray-700"
+                            >Status</label
+                        >
+                        <select
+                            id="status"
+                            required
+                            class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 h-10 focus:outline-none focus:ring-purple-500 focus:border-purple-500 sm:text-sm"
+                        >
+                            <option value="Applied">Applied</option>
+                            <option value="Interview">Interview</option>
+                            <option value="Rejected">Rejected</option>
+                            <option value="Offer">Offer</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label
+                            for="trackingLink"
+                            class="block text-sm font-medium text-gray-700"
+                            >Tracking Link (Optional)</label
+                        >
+                        <input
+                            type="url"
+                            id="trackingLink"
+                            placeholder="e.g., https://company.com/job-post"
+                            class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 h-10 focus:outline-none focus:ring-purple-500 focus:border-purple-500 sm:text-sm"
+                        />
+                    </div>
+                    <div>
+                        <label
+                            for="followUpDate"
+                            class="block text-sm font-medium text-gray-700"
+                            >Follow-up Date (Optional)</label
+                        >
+                        <input
+                            type="date"
+                            id="followUpDate"
+                            class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 h-10 focus:outline-none focus:ring-purple-500 focus:border-purple-500 sm:text-sm"
+                        />
+                    </div>
+                    <div>
+                        <label
+                            for="source"
+                            class="block text-sm font-medium text-gray-700"
+                            >Source (Optional)</label
+                        >
+                        <input
+                            type="text"
+                            id="source"
+                            placeholder="e.g., LinkedIn, Referral"
+                            class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 h-10 focus:outline-none focus:ring-purple-500 focus:border-purple-500 sm:text-sm"
+                        />
+                    </div>
+                    <div>
+                        <label
+                            for="location"
+                            class="block text-sm font-medium text-gray-700"
+                            >Location (Optional)</label
+                        >
+                        <input
+                            type="text"
+                            id="location"
+                            placeholder="e.g., Remote, New York"
+                            class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 h-10 focus:outline-none focus:ring-purple-500 focus:border-purple-500 sm:text-sm"
+                        />
+                    </div>
+                    <div class="md:col-span-2">
+                        <!-- This div will span both columns -->
+                        <label
+                            for="tags"
+                            class="block text-sm font-medium text-gray-700"
+                            >Tags (Optional)</label
+                        >
+                        <input
+                            type="text"
+                            id="tags"
+                            placeholder="Comma separated"
+                            class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 h-10 focus:outline-none focus:ring-purple-500 focus:border-purple-500 sm:text-sm"
+                        />
+                    </div>
+                    <div class="md:col-span-2">
+                        <!-- This div will span both columns -->
+                        <label
+                            for="notes"
+                            class="block text-sm font-medium text-gray-700"
+                            >Notes / Additional Details</label
+                        >
+                        <textarea
+                            id="notes"
+                            rows="3"
+                            class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-purple-500 focus:border-purple-500 sm:text-sm"
+                        ></textarea>
+                    </div>
+                    <div class="flex justify-end space-x-2 mt-4 md:col-span-2">
+                        <!-- Buttons also span both columns -->
+                        <button
+                            type="button"
+                            id="cancelFormBtn"
+                            class="btn-secondary rounded-lg py-2 px-4 text-sm transition duration-300 ease-in-out"
+                        >
+                            Cancel
+                        </button>
+                        <button
+                            type="submit"
+                            class="btn-primary rounded-lg py-2 px-4 text-sm transition duration-300 ease-in-out"
+                        >
+                            Save Application
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Delete Confirmation Modal -->
+        <div id="deleteConfirmModal" class="modal-overlay">
+            <div class="modal-content max-w-sm">
+                <div
+                    class="flex justify-between items-center bg-red-600 text-white py-3 px-4"
+                >
+                    <h2 class="text-lg font-semibold">Confirm Deletion</h2>
+                    <button
+                        id="closeDeleteModalBtn"
+                        class="text-white hover:text-red-200"
+                    >
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="p-6 text-gray-700">
+                    <p>Are you sure you want to delete this application?</p>
+                    <div class="flex justify-end space-x-2 mt-6">
+                        <button
+                            type="button"
+                            id="cancelDeleteBtn"
+                            class="btn-secondary rounded-lg py-2 px-4 text-sm transition duration-300 ease-in-out"
+                        >
+                            Cancel
+                        </button>
+                        <button
+                            type="button"
+                            id="confirmDeleteBtn"
+                            class="bg-red-600 hover:bg-red-700 text-white rounded-lg py-2 px-4 text-sm transition duration-300 ease-in-out"
+                        >
+                            Delete
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            const LOCAL_STORAGE_KEY = 'jobApplications';
+            let applications = [];
+            let currentDeleteAppId = null; // To store the ID of the app to be deleted
+
+            // DOM Elements
+            const applicationListDiv =
+                document.getElementById('applicationList');
+            const addApplicationBtn =
+                document.getElementById('addApplicationBtn');
+            const applicationModal =
+                document.getElementById('applicationModal');
+            const closeModalBtn = document.getElementById('closeModalBtn');
+            const cancelFormBtn = document.getElementById('cancelFormBtn');
+            const applicationForm = document.getElementById('applicationForm');
+            const modalTitle = document.getElementById('modalTitle');
+            const filterStatusSelect = document.getElementById('filterStatus');
+            const sortBySelect = document.getElementById('sortBy');
+
+            // Form Fields
+            const appIdInput = document.getElementById('appId');
+            const companyNameInput = document.getElementById('companyName');
+            const rolePositionInput = document.getElementById('rolePosition');
+            const dateAppliedInput = document.getElementById('dateApplied');
+            const statusSelect = document.getElementById('status');
+            const trackingLinkInput = document.getElementById('trackingLink');
+            const notesTextarea = document.getElementById('notes');
+            const followUpDateInput = document.getElementById('followUpDate');
+            const tagsInput = document.getElementById('tags');
+            const sourceInput = document.getElementById('source');
+            const locationInput = document.getElementById('location');
+
+            // Delete Confirmation Modal Elements
+            const deleteConfirmModal =
+                document.getElementById('deleteConfirmModal');
+            const closeDeleteModalBtn = document.getElementById(
+                'closeDeleteModalBtn'
+            );
+            const cancelDeleteBtn = document.getElementById('cancelDeleteBtn');
+            const confirmDeleteBtn =
+                document.getElementById('confirmDeleteBtn');
+
+            let currentFilterStatus = ''; // Default to empty string for 'All'
+            let currentSortOrder = 'newest';
+
+            function generateUniqueId() {
+                return (
+                    Date.now().toString(36) +
+                    Math.random().toString(36).substring(2, 9)
+                );
+            }
+            function getStatusBadgeClasses(status) {
+                switch (status) {
+                    case 'Applied':
+                        return 'inline-flex rounded-full px-2 py-1 text-xs font-semibold leading-5 status-Applied';
+                    case 'Interview':
+                        return 'inline-flex rounded-full px-2 py-1 text-xs font-semibold leading-5 status-Interview';
+                    case 'Rejected':
+                        return 'inline-flex rounded-full px-2 py-1 text-xs font-semibold leading-5 status-Rejected';
+                    case 'Offer':
+                        return 'inline-flex rounded-full px-2 py-1 text-xs font-semibold leading-5 status-Offer';
+                    default:
+                        return 'inline-flex rounded-full px-2 py-1 text-xs font-semibold leading-5 bg-gray-100 text-gray-800';
+                }
+            }
+
+            /**
+             * Truncates a string to a specified length and appends ellipsis if truncated.
+             * @param {string} str - The input string.
+             * @param {number} n - The maximum length.
+             * @returns {string} The truncated string.
+             */
+            function truncate(str, n) {
+                return str.length > n ? str.substr(0, n - 1) + '&hellip;' : str;
+            }
+
+            /**
+             * Attaches event listeners to edit, delete buttons on application rows.
+             * The generate email button and its logic have been removed.
+             */
+            function attachCardEventListeners() {
+                document
+                    .querySelectorAll('.edit-btn')
+                    .forEach(
+                        (btn) =>
+                            (btn.onclick = (e) =>
+                                editApplication(e.currentTarget.dataset.id))
+                    );
+                document.querySelectorAll('.delete-btn').forEach(
+                    (btn) =>
+                        (btn.onclick = (e) => {
+                            currentDeleteAppId = e.currentTarget.dataset.id; // Store the ID
+                            deleteConfirmModal.classList.add('active'); // Show confirmation modal
+                        })
+                );
+                // Removed event listener for generate-email-btn
+            }
+
+            /**
+             * Renders a single application row for the table.
+             * @param {object} app - The application object.
+             * @returns {string} HTML string for the application table row.
+             */
+            function renderApplicationRow(app) {
+                const statusBadge = `<span class="${getStatusBadgeClasses(
+                    app.status
+                )}">${app.status}</span>`;
+                const tags =
+                    app.tags && app.tags.length > 0
+                        ? app.tags
+                              .map(
+                                  (tag) =>
+                                      `<span class="inline-flex rounded-full px-2 py-1 text-xs font-medium leading-5 tag mr-1">${tag}</span>`
+                              )
+                              .join('')
+                        : '';
+
+                return `
+                <tr data-id="${app.id}">
+                    <td class="px-4 py-3 whitespace-nowrap">
+                        <div class="text-sm font-medium text-gray-900">${
+                            app.companyName
+                        }</div>
+                        <div class="text-gray-500 text-xs">${
+                            app.rolePosition
+                        }</div>
+                    </td>
+                    <td class="px-4 py-3 whitespace-nowrap">${statusBadge}</td>
+                    <td class="px-4 py-3 whitespace-nowrap text-sm">
+                        ${
+                            app.trackingLink
+                                ? `<a href="${app.trackingLink}" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:underline">Link</a>`
+                                : '-'
+                        }
+                    </td>
+                    <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-500">${
+                        app.dateApplied
+                    }</td>
+                    <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-500">${
+                        app.followUpDate || '-'
+                    }</td>
+                    <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-500">${
+                        app.source || '-'
+                    } ${tags}</td>
+                    <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-500">${
+                        app.location || '-'
+                    }</td>
+                    <td class="px-4 py-3 whitespace-nowrap text-right text-sm font-medium">
+                        <button data-id="${
+                            app.id
+                        }" class="edit-btn text-indigo-600 hover:text-indigo-800 mr-2" title="Edit"><i class="fas fa-pencil-alt"></i></button>
+                        <button data-id="${
+                            app.id
+                        }" class="delete-btn text-red-600 hover:text-red-800" title="Delete"><i class="fas fa-trash-alt"></i></button>
+                    </td>
+                </tr>
+            `;
+            }
+
+            /**
+             * Renders all applications based on current filters and sort order.
+             */
+            function renderApplications() {
+                let filteredApps = applications;
+                if (currentFilterStatus) {
+                    // Only filter if a specific status is selected
+                    filteredApps = applications.filter(
+                        (app) => app.status === currentFilterStatus
+                    );
+                }
+                if (currentSortOrder === 'newest') {
+                    filteredApps.sort(
+                        (a, b) =>
+                            new Date(b.dateApplied) - new Date(a.dateApplied)
+                    );
+                }
+
+                const tbody = document.getElementById('applicationList');
+                // Updated colspan to 8 for the new 'Link' column
+                tbody.innerHTML =
+                    filteredApps.length === 0
+                        ? `<tr><td colspan="8" class="px-4 py-3 text-center text-gray-500">No applications found.</td></tr>`
+                        : filteredApps.map(renderApplicationRow).join('');
+                attachCardEventListeners();
+            }
+
+            /**
+             * Saves the current applications array to LocalStorage.
+             */
+            function saveApplications() {
+                localStorage.setItem(
+                    LOCAL_STORAGE_KEY,
+                    JSON.stringify(applications)
+                );
+            }
+
+            /**
+             * Loads applications from LocalStorage.
+             */
+            function loadApplications() {
+                const storedApps = localStorage.getItem(LOCAL_STORAGE_KEY);
+                if (storedApps) {
+                    applications = JSON.parse(storedApps);
+                } else {
+                    // Sample data if LocalStorage is empty
+                    applications = [
+                        {
+                            id: generateUniqueId(),
+                            companyName: 'Creative Minds Agency',
+                            rolePosition: 'Full Stack Engineer',
+                            dateApplied: '2025-07-25',
+                            followUpDate: '2025-08-01',
+                            status: 'Applied',
+                            source: 'Website',
+                            location: 'Local',
+                            tags: [],
+                            notes: '',
+                            trackingLink: '',
+                        },
+                        {
+                            id: generateUniqueId(),
+                            companyName: 'Tech Innovations Inc.',
+                            rolePosition: 'Frontend Developer',
+                            dateApplied: '2025-07-20',
+                            followUpDate: '2025-07-29',
+                            status: 'Interview',
+                            source: 'LinkedIn',
+                            location: 'Remote',
+                            tags: ['Urgent'],
+                            notes: 'Second round interview scheduled.',
+                            trackingLink:
+                                'https://techinnovations.com/careers/fe',
+                        },
+                        {
+                            id: generateUniqueId(),
+                            companyName: 'Global Solutions Ltd.',
+                            rolePosition: 'UI/UX Designer',
+                            dateApplied: '2025-07-15',
+                            followUpDate: '',
+                            status: 'Rejected',
+                            source: 'Referral',
+                            location: '-',
+                            tags: [],
+                            notes: 'No feedback provided.',
+                            trackingLink: '',
+                        },
+                        {
+                            id: generateUniqueId(),
+                            companyName: 'Data Driven Co.',
+                            rolePosition: 'Data Scientist',
+                            dateApplied: '2025-07-10',
+                            followUpDate: '2025-08-05',
+                            status: 'Offer',
+                            source: 'LinkedIn',
+                            location: 'Remote',
+                            tags: ['High Pay'],
+                            notes: 'Negotiating terms.',
+                            trackingLink:
+                                'https://datadrivenco.com/jobs/data-scientist',
+                        },
+                    ];
+                    saveApplications();
+                }
+                renderApplications();
+            }
+
+            /**
+             * Opens the add/edit application modal.
+             * @param {object} [appData] - Optional application data to pre-fill the form for editing.
+             */
+            function openModal(appData = {}) {
+                applicationForm.reset(); // Clear form fields
+                appIdInput.value = ''; // Clear hidden ID
+                if (Object.keys(appData).length > 0) {
+                    // Editing existing application
+                    modalTitle.textContent = 'Edit Application';
+                    appIdInput.value = appData.id;
+                    companyNameInput.value = appData.companyName;
+                    rolePositionInput.value = appData.rolePosition;
+                    dateAppliedInput.value = appData.dateApplied;
+                    statusSelect.value = appData.status;
+                    trackingLinkInput.value = appData.trackingLink || '';
+                    notesTextarea.value = appData.notes;
+                    followUpDateInput.value = appData.followUpDate || '';
+                    tagsInput.value = appData.tags
+                        ? appData.tags.join(', ')
+                        : '';
+                    sourceInput.value = appData.source || '';
+                    locationInput.value = appData.location || '';
+                } else {
+                    // Adding new application
+                    modalTitle.textContent = 'Add New Application';
+                    dateAppliedInput.value = new Date()
+                        .toISOString()
+                        .split('T')[0]; // Default to today
+                }
+                applicationModal.classList.add('active');
+            }
+
+            /**
+             * Closes the add/edit application modal.
+             */
+            function closeModal() {
+                applicationModal.classList.remove('active');
+            }
+
+            /**
+             * Handles form submission for adding or updating an application.
+             * @param {Event} event - The form submission event.
+             */
+            function handleFormSubmit(event) {
+                event.preventDefault();
+                const id = appIdInput.value;
+                const newApplication = {
+                    companyName: companyNameInput.value,
+                    rolePosition: rolePositionInput.value,
+                    dateApplied: dateAppliedInput.value,
+                    status: statusSelect.value,
+                    trackingLink: trackingLinkInput.value,
+                    notes: notesTextarea.value,
+                    followUpDate: followUpDateInput.value,
+                    tags: tagsInput.value
+                        .split(',')
+                        .map((tag) => tag.trim())
+                        .filter((tag) => tag !== ''),
+                    source: sourceInput.value,
+                    location: locationInput.value,
+                };
+                if (id) {
+                    applications = applications.map((app) =>
+                        app.id === id ? { ...app, ...newApplication } : app
+                    );
+                } else {
+                    newApplication.id = generateUniqueId();
+                    applications.unshift(newApplication); // Add to the beginning
+                }
+                saveApplications();
+                renderApplications();
+                closeModal();
+            }
+
+            /**
+             * Initiates the delete process by showing the confirmation modal.
+             * @param {string} id - The ID of the application to delete.
+             */
+            function confirmDeleteApplication(id) {
+                currentDeleteAppId = id; // Store the ID
+                deleteConfirmModal.classList.add('active'); // Show confirmation modal
+            }
+
+            /**
+             * Executes the deletion after confirmation.
+             */
+            function executeDeleteApplication() {
+                if (currentDeleteAppId) {
+                    applications = applications.filter(
+                        (app) => app.id !== currentDeleteAppId
+                    );
+                    saveApplications();
+                    renderApplications();
+                    currentDeleteAppId = null; // Clear the stored ID
+                }
+                deleteConfirmModal.classList.remove('active'); // Close confirmation modal
+            }
+
+            /**
+             * Cancels the deletion process and closes the confirmation modal.
+             */
+            function cancelDeleteConfirmation() {
+                currentDeleteAppId = null; // Clear the stored ID
+                deleteConfirmModal.classList.remove('active'); // Close confirmation modal
+            }
+
+            /**
+             * Initiates the edit process for an application.
+             * @param {string} id - The ID of the application to edit.
+             */
+            function editApplication(id) {
+                const appToEdit = applications.find((app) => app.id === id);
+                if (appToEdit) openModal(appToEdit);
+            }
+
+            /**
+             * Handles filter dropdown change.
+             */
+            function handleFilterChange() {
+                currentFilterStatus = filterStatusSelect.value;
+                renderApplications();
+            }
+
+            /**
+             * Handles sort order change.
+             */
+            function handleSortChange() {
+                currentSortOrder = sortBySelect.value;
+                renderApplications();
+            }
+
+            // Removed openEmailModal, closeEmailModal, copyEmailToClipboard functions
+
+            // --- Event Listeners ---
+            document.addEventListener('DOMContentLoaded', () => {
+                loadApplications(); // This also calls renderApplications()
+
+                // Header button to open modal
+                addApplicationBtn.addEventListener('click', () => openModal());
+
+                // Application Modal close buttons
+                closeModalBtn.addEventListener('click', closeModal);
+                cancelFormBtn.addEventListener('click', closeModal);
+                applicationModal.addEventListener('click', (e) => {
+                    if (e.target === applicationModal) {
+                        // Close when clicking outside the modal content
+                        closeModal();
+                    }
+                });
+
+                // Form submission
+                applicationForm.addEventListener('submit', handleFormSubmit);
+
+                // Filter dropdown
+                filterStatusSelect.addEventListener(
+                    'change',
+                    handleFilterChange
+                );
+
+                // Sort dropdown
+                sortBySelect.addEventListener('change', handleSortChange);
+
+                // Removed email modal event listeners
+                // closeEmailModalBtn.addEventListener('click', closeEmailModal);
+                // emailModal.addEventListener('click', (e) => {
+                //     if (e.target === emailModal) {
+                //         closeEmailModal();
+                //     }
+                // });
+                // copyEmailBtn.addEventListener('click', copyEmailToClipboard);
+
+                // Delete Confirmation Modal buttons
+                closeDeleteModalBtn.addEventListener(
+                    'click',
+                    cancelDeleteConfirmation
+                );
+                cancelDeleteBtn.addEventListener(
+                    'click',
+                    cancelDeleteConfirmation
+                );
+                confirmDeleteBtn.addEventListener(
+                    'click',
+                    executeDeleteApplication
+                );
+                deleteConfirmModal.addEventListener('click', (e) => {
+                    if (e.target === deleteConfirmModal) {
+                        cancelDeleteConfirmation();
+                    }
+                });
+            });
+        </script>
+    </body>
+</html>
